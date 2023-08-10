@@ -1,0 +1,28 @@
+/* Write your CSS here */
+.BgContainer {
+  background-image: url('https://assets.ccbp.in/frontend/react-js/ipl-dashboard-lg-bg.png');
+  background-size: cover;
+  width: 70vw;
+  font-family: Bree Serif;
+  padding-top: 30px;
+  padding-bottom: 40px;
+}
+.Heading {
+  color: #ffffff;
+  font-size: 30px;
+}
+.iplLogo {
+  height: 60px;
+  width: 40px;
+  margin-top: 10px;
+  margin-right: 10px;
+}
+.heading-Container {
+  display: flex;
+  justify-content: center;
+}
+.DashBoardContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}

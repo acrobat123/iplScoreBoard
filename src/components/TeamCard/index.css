@@ -1,0 +1,23 @@
+/* Write your CSS here */
+.teamImage {
+  height: 80px;
+  width: 60px;
+  margin-right: 20px;
+}
+h3 {
+  color: #ffffff;
+  font-weight: 400;
+  font-size: 21px;
+}
+li {
+  list-style-type: none;
+  display: flex;
+  padding: 20px;
+  width: 330px;
+  background-color: #ffffff33;
+  border-radius: 10px;
+  border-width: 0px;
+  border-style: solid;
+  margin-right: 20px;
+  margin-bottom: 15px;
+}

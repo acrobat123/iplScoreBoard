@@ -1,0 +1,7 @@
+/* Write your CSS here */
+.TeamContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 70vw;
+}
