@@ -11,7 +11,6 @@ const App = () => (
     <Switch>
       <Route exact path="/" component={Home} />
       <Route exact path="/team-matches/:id" component={TeamMatches} />
-      <TeamMatches />
     </Switch>
   </>
 )
