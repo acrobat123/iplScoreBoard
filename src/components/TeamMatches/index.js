@@ -8,7 +8,12 @@ import MatchCard from '../MatchCard'
 import LatestMatch from '../LatestMatch'
 
 class TeamMatches extends Component {
-  state = {teamBannerurl: {}, latestMatches: {}, recentMatches: {}}
+    state = {
+    data: '',
+    team: null,
+    loading: true,
+  }
+
 
   componentDidMount() {
     this.getTeamMatchDetails()
@@ -21,13 +26,10 @@ class TeamMatches extends Component {
     const teamResponse = await fetch(`https://apis.ccbp.in/ipl/${id}`)
     const data = await teamResponse.json()
 
-    const modifiedData = {
-      latestMatchDetails: data.latest_match_details,
-      teamBannerUrl: data.team_banner_url,
-    }
-    const {latestMatchDetails, teamBannerUrl} = modifiedData
+    
+    const latestMatchDetails = data.latest_match_details
 
-    /* const NewRecentMatches = data.recent_matches.map(each => ({
+    const NewRecentMatches = data.recent_matches.map(each => ({
       competingTeam: each.competing_team,
       competingTeamLogo: each.competing_team_logo,
       date: each.date,
@@ -39,7 +41,9 @@ class TeamMatches extends Component {
       secondInnings: each.second_innings,
       umpires: each.umpires,
       venue: each.venue,
-    })) */
+    }))
+
+    
     const modifiedLatestMatchDetails = {
       competingTeam: latestMatchDetails.competing_team,
       competingTeamLogo: latestMatchDetails.competing_team_logo,
@@ -54,20 +58,54 @@ class TeamMatches extends Component {
       venue: latestMatchDetails.venue,
     }
 
+     const newData = {
+      teamBannerurl: data.team_banner_url,
+      latestMatches,
+      recentMatches: NewRecentMatches,
+    }
     this.setState({
-      teamBannerurl: teamBannerUrl,
-      latestMatches: modifiedLatestMatchDetails,
-      recentMatches: data.recent_matches,
+      team: id,
+      loading: false,
+      data: newData,
     })
   }
 
+let bannerColor
+    if (team === 'RCB') {
+      bannerColor = 'rcb'
+    } else if (team === 'CSK') {
+      bannerColor = 'csk'
+    } else if (team === 'KXP') {
+      bannerColor = 'kxp'
+    } else if (team === 'KKR') {
+      bannerColor = 'kkr'
+    } else if (team === 'MI') {
+      bannerColor = 'mi'
+    } else if (team === 'SRH') {
+      bannerColor = 'srh'
+    } else if (team === 'DC') {
+      bannerColor = 'dc'
+    } else if (team === 'RR') {
+      bannerColor = 'rr'
+    }
+  
   render() {
-    const {teamBannerurl, latestMatches, recentMatches} = this.state
-    return (
-      <div className="TeamContainer">
-        <img src={teamBannerurl} />
-        <LatestMatch latestMatchesDetails={latestMatches} />
-        <MatchCard details={recentMatches} />
+     const {data, team, loading} = this.state
+     const {teamBannerurl, latestMatches, recentMatches} = data
+    return loading ? (
+      <div data-testid="loader" className="loader">
+        <Loader type="Oval" color="#ffffff" height={50} width={50} />
+      </div>
+    ) : (
+      <div className={`TeamContainer ${bannerColor}`}>
+        <img alt="team banner" className="banner" src={teamBannerurl} />
+        <h2 className="latesMatchesHeading">Latest Matches</h2>
+        <LatestMatch key={latestMatches.id} matches={latestMatches} />
+        <ul>
+          {recentMatches.map(each => (
+            <MatchCard key={each.id} details={each} />
+          ))}
+        </ul>
       </div>
     )
   }
