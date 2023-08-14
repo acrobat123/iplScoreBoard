@@ -1,1 +1,12 @@
 /* Write your CSS here */
+.NotFound {
+  background-image: url('https://assets.ccbp.in/frontend/react-js/ipl-dashboard-lg-bg.png');
+  background-size: cover;
+  width: 70vw;
+  height: 100vh;
+  font-family: Bree Serif;
+  text-align: center;
+  padding-top: 300px;
+  font-size: 30px;
+  color: #ffffff;
+}
