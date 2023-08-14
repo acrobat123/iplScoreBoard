@@ -1,1 +1,30 @@
 /* Write your CSS here */
+.boxItem {
+  background-color: #1e293b;
+  width: 250px;
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: Bree Serif;
+}
+.TeamLogo {
+  height: 60px;
+  width: 60px;
+}
+.teamHeading {
+  font-size: 20px;
+}
+.result {
+  font-size: 15px;
+  color: #ffffff;
+}
+.win {
+  color: #18ed66;
+  font-size: 14px;
+}
+.lose {
+  color: #e31a1a;
+  font-size: 14px;
+}
+
