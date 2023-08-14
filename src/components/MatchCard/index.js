@@ -1,27 +1,35 @@
 // Write your code here
+
 import './index.css'
 
 const MatchCard = props => {
   const {details} = props
-  console.log(details)
-  const NewRecentMatches = details.map(each => ({
-    competingTeam: each.competing_team,
-    competingTeamLogo: each.competing_team_logo,
-    date: each.date,
-    firstInnings: each.first_innings,
-    id: each.id,
-    manOfTheMatch: each.man_of_the_match,
-    matchStatus: each.match_status,
-    result: each.result,
-    secondInnings: each.second_innings,
-    umpires: each.umpires,
-    venue: each.venue,
-  }))
-
+  const {
+    competingTeam,
+    competingTeamLogo,
+    date,
+    firstInnings,
+    manOfTheMatch,
+    matchStatus,
+    result,
+    secondInnings,
+    umpires,
+    venue,
+  } = details
+  const matchStatusClass = matchStatus === 'Won' ? 'win' : 'lose'
   return (
-    <div>
-      <h1>hello</h1>
-    </div>
+    <li className="boxItem">
+      <div>
+        <img
+          alt={`competing team ${competingTeam}`}
+          className="TeamLogo"
+          src={competingTeamLogo}
+        />
+      </div>
+      <p className="teamHeading">{competingTeam}</p>
+      <p className="result">{result}</p>
+      <p className={matchStatusClass}>{matchStatus}</p>
+    </li>
   )
 }
 
