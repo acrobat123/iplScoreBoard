@@ -1,111 +1,121 @@
-// Write your code here
 import {Component} from 'react'
+import Loader from 'react-loader-spinner'
+
+import LatestMatch from '../LatestMatch'
+import MatchCard from '../MatchCard'
 
 import './index.css'
 
-import MatchCard from '../MatchCard'
-
-import LatestMatch from '../LatestMatch'
+const teamMatchesApiUrl = 'https://apis.ccbp.in/ipl/'
 
 class TeamMatches extends Component {
-    state = {
-    data: '',
-    team: null,
-    loading: true,
+  state = {
+    isLoading: true,
+    teamMatchesData: {},
   }
-
 
   componentDidMount() {
-    this.getTeamMatchDetails()
+    this.getTeamMatches()
   }
 
-  getTeamMatchDetails = async () => {
-    const {match} = await this.props
-    const {params} = await match
+  getFormattedData = data => ({
+    umpires: data.umpires,
+    result: data.result,
+    manOfTheMatch: data.man_of_the_match,
+    id: data.id,
+    date: data.date,
+    venue: data.venue,
+    competingTeam: data.competing_team,
+    competingTeamLogo: data.competing_team_logo,
+    firstInnings: data.first_innings,
+    secondInnings: data.second_innings,
+    matchStatus: data.match_status,
+  })
+
+  getTeamMatches = async () => {
+    const {match} = this.props
+    const {params} = match
     const {id} = params
-    const teamResponse = await fetch(`https://apis.ccbp.in/ipl/${id}`)
-    const data = await teamResponse.json()
 
-    
-    const latestMatchDetails = data.latest_match_details
-
-    const NewRecentMatches = data.recent_matches.map(each => ({
-      competingTeam: each.competing_team,
-      competingTeamLogo: each.competing_team_logo,
-      date: each.date,
-      firstInnings: each.first_innings,
-      id: each.id,
-      manOfTheMatch: each.man_of_the_match,
-      matchStatus: each.match_status,
-      result: each.result,
-      secondInnings: each.second_innings,
-      umpires: each.umpires,
-      venue: each.venue,
-    }))
-
-    
-    const modifiedLatestMatchDetails = {
-      competingTeam: latestMatchDetails.competing_team,
-      competingTeamLogo: latestMatchDetails.competing_team_logo,
-      date: latestMatchDetails.date,
-      firstInnings: latestMatchDetails.first_innings,
-      id: latestMatchDetails.id,
-      manOfTheMatch: latestMatchDetails.man_of_the_match,
-      matchStatus: latestMatchDetails.match_status,
-      result: latestMatchDetails.result,
-      secondInnings: latestMatchDetails.second_innings,
-      umpires: latestMatchDetails.umpires,
-      venue: latestMatchDetails.venue,
+    const response = await fetch(`${teamMatchesApiUrl}${id}`)
+    const fetchedData = await response.json()
+    const formattedData = {
+      teamBannerURL: fetchedData.team_banner_url,
+      latestMatch: this.getFormattedData(fetchedData.latest_match_details),
+      recentMatches: fetchedData.recent_matches.map(eachMatch =>
+        this.getFormattedData(eachMatch),
+      ),
     }
 
-     const newData = {
-      teamBannerurl: data.team_banner_url,
-      latestMatches,
-      recentMatches: NewRecentMatches,
-    }
-    this.setState({
-      team: id,
-      loading: false,
-      data: newData,
-    })
+    this.setState({teamMatchesData: formattedData, isLoading: false})
   }
 
-let bannerColor
-    if (team === 'RCB') {
-      bannerColor = 'rcb'
-    } else if (team === 'CSK') {
-      bannerColor = 'csk'
-    } else if (team === 'KXP') {
-      bannerColor = 'kxp'
-    } else if (team === 'KKR') {
-      bannerColor = 'kkr'
-    } else if (team === 'MI') {
-      bannerColor = 'mi'
-    } else if (team === 'SRH') {
-      bannerColor = 'srh'
-    } else if (team === 'DC') {
-      bannerColor = 'dc'
-    } else if (team === 'RR') {
-      bannerColor = 'rr'
-    }
-  
-  render() {
-     const {data, team, loading} = this.state
-     const {teamBannerurl, latestMatches, recentMatches} = data
-    return loading ? (
-      <div data-testid="loader" className="loader">
-        <Loader type="Oval" color="#ffffff" height={50} width={50} />
+  renderRecentMatchesList = () => {
+    const {teamMatchesData} = this.state
+    const {recentMatches} = teamMatchesData
+
+    return (
+      <ul className="recent-matches-list">
+        {recentMatches.map(recentMatch => (
+          <MatchCard matchDetails={recentMatch} key={recentMatch.id} />
+        ))}
+      </ul>
+    )
+  }
+
+  renderTeamMatches = () => {
+    const {teamMatchesData} = this.state
+    const {teamBannerURL, latestMatch} = teamMatchesData
+
+    return (
+      <div className="responsive-container">
+        <img src={teamBannerURL} alt="team banner" className="team-banner" />
+        <LatestMatch latestMatchData={latestMatch} />
+        {this.renderRecentMatchesList()}
       </div>
-    ) : (
-      <div className={`TeamContainer ${bannerColor}`}>
-        <img alt="team banner" className="banner" src={teamBannerurl} />
-        <h2 className="latesMatchesHeading">Latest Matches</h2>
-        <LatestMatch key={latestMatches.id} matches={latestMatches} />
-        <ul>
-          {recentMatches.map(each => (
-            <MatchCard key={each.id} details={each} />
-          ))}
-        </ul>
+    )
+  }
+
+  renderLoader = () => (
+    <div data-testid="loader" className="loader-container">
+      <Loader type="Oval" color="#ffffff" height={50} />
+    </div>
+  )
+
+  getRouteClassName = () => {
+    const {match} = this.props
+    const {params} = match
+    const {id} = params
+
+    switch (id) {
+      case 'RCB':
+        return 'rcb'
+      case 'KKR':
+        return 'kkr'
+      case 'KXP':
+        return 'kxp'
+      case 'CSK':
+        return 'csk'
+      case 'RR':
+        return 'rr'
+      case 'MI':
+        return 'mi'
+      case 'SH':
+        return 'srh'
+      case 'DC':
+        return 'dc'
+      default:
+        return ''
+    }
+  }
+
+  render() {
+    const {isLoading} = this.state
+    const className = `team-matches-container ${this.getRouteClassName()}`
+
+    return (
+      <div className={className}>
+        {isLoading ? this.renderLoader() : this.renderTeamMatches()}
       </div>
     )
   }
